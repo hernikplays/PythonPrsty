@@ -2,6 +2,7 @@ from pynput import keyboard
 from colorama import Fore,init,Back
 import os
 import utils
+from sys import stdin
 
 init()
 
@@ -26,7 +27,7 @@ def main_menu():
     if(choose == "1"):
         path = input("Zadejte cestu k souboru s textem")
         text = utils.load_text(path)
-        os.system("cls||clear")
+        #os.system("cls||clear")
         if(text == ""):
             print(f"{Fore.RED}Při otevírání souboru došlo k chybě{Fore.RESET}\n")
         main_menu()
@@ -36,7 +37,7 @@ def main_menu():
         pis()
         listener = keyboard.Listener(on_release=on_key_release)
         listener.start()
-        input()
+        stdin.read()
 
 
 def pis():
@@ -48,18 +49,31 @@ def on_key_release(key):
     global napsano,pismeno,radek,text
     p = text[radek][pismeno]
     try:
-        if(p == key.char):
-            napsano += key.char
-        else:
-            napsano += f"{Fore.RED}{key.char}{Fore.RESET}"
+        if(p == key.char): napsano += key.char
+        else: napsano += f"{Fore.RED}{key.char}{Fore.RESET}"
     except AttributeError:
         if(key == keyboard.Key.space):
-            if(p == " "):
-                napsano += " "
-            else:
-                napsano += f"{Fore.RED}_{Fore.RESET}"
+            if(p == " "): napsano += " "
+            else: napsano += f"{Fore.RED}_{Fore.RESET}"
+        elif(key == keyboard.Key.enter and pismeno != 0):
+            if(p == "⤶"): napsano += "\n"
+            else: napsano += f"{Fore.RED}⤶{Fore.RESET}\n"
         else: return
-    pismeno+=1
+    print(pismeno)
+    print(len(text[radek]))
+    if(pismeno+1 == len(text[radek]) and radek+1 != len(text)):
+        radek+=1
+        pismeno = 0
+        napsano = ""
+    elif(pismeno+1 == len(text[radek]) and radek+1 == len(text)):
+        hotovo()
+    else:
+        pismeno+=1
+        os.system("cls||clear")
+        pis()
+
+def hotovo():
     os.system("cls||clear")
-    pis()
+    print("hotovo")
+
 main_menu()

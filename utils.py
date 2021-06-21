@@ -1,4 +1,3 @@
-from colorama import Fore
 def load_text(path): # načte soubor s textem
     file = ""
     try:
@@ -6,5 +5,9 @@ def load_text(path): # načte soubor s textem
     except:
         return ""
     current_text = file.readlines()
+    text = []
+    for l in current_text:
+        text.append(l.replace('\n', '⤶'))
+    
     file.close()
-    return current_text
+    return text
