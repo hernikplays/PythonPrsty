@@ -2,6 +2,11 @@
 Deseti prsty v pythonu
 </div>
 
-Výhody:
+## Výhody:
 - ve skutečnosti nepoužitelné
 - žádné výhody
+
+## Spuštění
+1. Stáhni repozitář
+2. Nainstaluj balíky z `requirements.txt`
+3. Spusť pomocí `python main.py`
