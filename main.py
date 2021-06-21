@@ -25,7 +25,7 @@ def main_menu():
         print(f"{Fore.RED}2 - Začít psat{Fore.RESET}")
     choose = input()
     if(choose == "1"):
-        path = input("Zadejte cestu k souboru s textem")
+        path = input("Zadejte cestu k souboru s textem\n")
         text = utils.load_text(path)
         #os.system("cls||clear")
         if(text == ""):
