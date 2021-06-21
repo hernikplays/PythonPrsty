@@ -1,1 +1,2 @@
 pynput==1.7.3
+colorama==0.4.4
