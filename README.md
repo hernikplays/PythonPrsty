@@ -2,6 +2,8 @@
 Deseti prsty v pythonu
 </div>
 
+Testováno na Windows
+
 ## Výhody:
 - ve skutečnosti nepoužitelné
 - žádné výhody
