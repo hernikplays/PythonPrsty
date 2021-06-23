@@ -18,13 +18,14 @@ slovo = 0 # aktuální psané slovo
 ctrl = False # kontrola jestli je stisknutý control
 predchozi_napsano = "" # ukladame predchozi radek
 soubor = ""
+chybna_neopakuj = []
 
 start = 0 # začátek psaní
 konec = 0 # konec psaní
 chyby = 0 # chyby
 
 def main_menu(): # funkce pro zobrazení hlavního menu
-    global text,start,chyby,soubor,slovo,radek,pismeno,napsano,predchozi_napsano
+    global text,start,chyby,soubor,slovo,radek,pismeno,napsano,predchozi_napsano,chybna_neopakuj
     print(f"{Back.WHITE}{Fore.BLACK}Vyberte co chcete dělat:{Back.RESET}{Fore.RESET}")
     print("1 - načíst soubor s textem")
     if text != "":
@@ -57,6 +58,7 @@ def main_menu(): # funkce pro zobrazení hlavního menu
         pismeno = 0
         radek = 0
         slovo = 0
+        chybna_neopakuj = []
 
         pis()
         start = time() # zaznamená čas, kdy začal uživatel psát
@@ -81,7 +83,7 @@ def on_key_press(key): # kontroloa pro control
         ctrl = True
 
 def on_key_release(key): # funkce, která se spustí při puštění klávesy
-    global napsano,pismeno,radek,text,chyby,ctrl,predchozi_napsano,slovo,soubor,listener
+    global napsano,pismeno,radek,text,chyby,ctrl,predchozi_napsano,slovo,soubor,listener,chybna_neopakuj
     p = text[radek][pismeno] # aktuálně psané písmeno
     s = text[radek].split(" ")[slovo] # aktuálně psané slovo
     napsano = napsano.replace(f"{Fore.GREEN}^{Fore.RESET}","")
@@ -95,7 +97,9 @@ def on_key_release(key): # funkce, která se spustí při puštění klávesy
         else: 
             napsano += f"{Fore.RED}{key.char}{Fore.RESET}"+f"{Fore.GREEN}^{Fore.RESET}" # jinak vložíme červeně
             chyby+=1
-            utils.zapis_chybu(s,soubor)
+            if s not in chybna_neopakuj:
+                utils.zapis_chybu(s,soubor)
+                chybna_neopakuj.append(s)
     except AttributeError: # speciální klávesy jako je mezerník nevrací ".char" a vyhodí AttributeError
         if(key == keyboard.Key.space): # pokud je klávesa mezerník
             slovo+=1
