@@ -4,9 +4,13 @@ Deseti prsty v pythonu
 
 Testováno na Windows
 
-## Výhody:
-- ve skutečnosti nepoužitelné
-- žádné výhody
+## Výhody oproti programu Deseti Prsty:
+- je zdarma
+- není z roku 1999
+
+## Nevýhody:
+- python
+- asi nemá všechno co osmi prsty sry
 
 ## Spuštění
 1. Stáhni repozitář
