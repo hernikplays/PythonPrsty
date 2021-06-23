@@ -4,26 +4,27 @@ from colorama import Fore,init,Back
 import os
 import utils
 from sys import stdin
+import re
 
 init()
 
 # předdefinujeme proměnné
 text = ""
-toPsat = None # řádek, který má být právě psán
 napsano = f"{Fore.GREEN}^{Fore.RESET}" # to, co už uživatel napsal
-thread = None # proměnná pro vlákno, abychom mohli input předčasně ukončit
 listener = None # proměnná pro posluchač stisknutí kláves
 radek = 0 # řádek, který zrovna píšeme
 pismeno = 0 # písmeno, které právě máme psát
+slovo = 0 # aktuální psané slovo
 ctrl = False # kontrola jestli je stisknutý control
 predchozi_napsano = "" # ukladame predchozi radek
+soubor = ""
 
 start = 0 # začátek psaní
 konec = 0 # konec psaní
 chyby = 0 # chyby
 
 def main_menu(): # funkce pro zobrazení hlavního menu
-    global text,start,chyby
+    global text,start,chyby,soubor,slovo,radek,pismeno,napsano,predchozi_napsano
     print(f"{Back.WHITE}{Fore.BLACK}Vyberte co chcete dělat:{Back.RESET}{Fore.RESET}")
     print("1 - načíst soubor s textem")
     if text != "":
@@ -31,17 +32,32 @@ def main_menu(): # funkce pro zobrazení hlavního menu
     else:
         print(f"{Fore.RED}2 - Začít psat{Fore.RESET}")
     choose = input()
+    print(choose)
     if(choose == "1"):
         path = input("Zadejte cestu k souboru s textem\n")
-        text = utils.load_text(path)
-        os.system("cls||clear")
-        if(text == ""):
-            print(f"{Fore.RED}Při otevírání souboru došlo k chybě{Fore.RESET}\n")
+        if not path.endswith(".txt"):
+            print("Program podporuje pouze formát .txt")
+        else:
+            soubor = re.findall(r"[a-zA-Z_]+\.txt",path)[-1]
+            text = utils.load_text(path)
+            os.system("cls||clear")
+            if(text == ""):
+                print(f"{Fore.RED}Při otevírání souboru došlo k chybě{Fore.RESET}\n")
         main_menu()
     elif(choose == "2" and text == ""):
         print(f"{Fore.RED}Není načtený žádný text")
     elif(choose == "2"):
         chyby = 0
+        chybnaslova = utils.otevri_chyby(soubor)
+        if(chybnaslova != ""):
+            text.insert(0,chybnaslova)     
+        
+        napsano = f"{Fore.GREEN}^{Fore.RESET}"   
+        predchozi_napsano = ""
+        pismeno = 0
+        radek = 0
+        slovo = 0
+
         pis()
         start = time() # zaznamená čas, kdy začal uživatel psát
         listener = keyboard.Listener(on_release=on_key_release,on_press=on_key_press)
@@ -65,20 +81,24 @@ def on_key_press(key): # kontroloa pro control
         ctrl = True
 
 def on_key_release(key): # funkce, která se spustí při puštění klávesy
-    global napsano,pismeno,radek,text,chyby,ctrl,predchozi_napsano
+    global napsano,pismeno,radek,text,chyby,ctrl,predchozi_napsano,slovo,soubor,listener
     p = text[radek][pismeno] # aktuálně psané písmeno
+    s = text[radek].split(" ")[slovo] # aktuálně psané slovo
     napsano = napsano.replace(f"{Fore.GREEN}^{Fore.RESET}","")
     try:
         if(key.vk == 90 and ctrl): # ctrl+z
             os.system("cls||clear")
             main_menu()
+            listener.join()
             return False
         elif(p == key.char): napsano += key.char+f"{Fore.GREEN}^{Fore.RESET}" # pokud se písmeno rovná znaku stisknuté klávesy, vložíme normálně
         else: 
             napsano += f"{Fore.RED}{key.char}{Fore.RESET}"+f"{Fore.GREEN}^{Fore.RESET}" # jinak vložíme červeně
             chyby+=1
+            utils.zapis_chybu(s,soubor)
     except AttributeError: # speciální klávesy jako je mezerník nevrací ".char" a vyhodí AttributeError
         if(key == keyboard.Key.space): # pokud je klávesa mezerník
+            slovo+=1
             if(p == " "): napsano += " "+f"{Fore.GREEN}^{Fore.RESET}"
             else: 
                 napsano += f"{Fore.RED}_{Fore.RESET}"+f"{Fore.GREEN}^{Fore.RESET}"
@@ -94,8 +114,9 @@ def on_key_release(key): # funkce, která se spustí při puštění klávesy
     if(pismeno+1 == len(text[radek]) and radek+1 != len(text)): # pokud jsme na konci řádku ale nejsme na konci textu
         radek+=1
         pismeno = 0
+        slovo = 0
         predchozi_napsano = napsano.replace(f"{Fore.GREEN}^{Fore.RESET}","")
-        napsano = ""
+        napsano = f"{Fore.GREEN}^{Fore.RESET}"
         os.system("cls||clear")
         pis()
     elif(pismeno+1 == len(text[radek]) and radek+1 == len(text)): # pokud jsme na konci řádku a konci textu
@@ -114,8 +135,7 @@ def hotovo(): # finální vyhodnocení
     print(f"Chybné úhozy: {Fore.RED}{chyby}{Fore.RESET}")
     print()
     print(f"Průměrná rychlost: {Fore.CYAN}{(utils.delka_textu(text)/(konec-start))*60}{Fore.RESET} úhozů za minutu")
-    print(f"\nStiskni {Fore.GREEN}Ctrl+Z{Fore.RESET} pro navrácení do menu")
-    # pozor, posluchač klávesnice zde stále nekončí
+    #print(f"\nStiskni {Fore.GREEN}Ctrl+Z{Fore.RESET} pro navrácení do menu")
 
 utils.welcome()
 main_menu()
