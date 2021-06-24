@@ -46,7 +46,9 @@ def main_menu(): # funkce pro zobrazení hlavního menu
                 print(f"{Fore.RED}Při otevírání souboru došlo k chybě{Fore.RESET}\n")
         main_menu()
     elif(choose == "2" and text == ""):
+        os.system("cls||clear")
         print(f"{Fore.RED}Není načtený žádný text")
+        main_menu()
     elif(choose == "2"):
         chyby = 0
         chybnaslova = utils.otevri_chyby(soubor)
