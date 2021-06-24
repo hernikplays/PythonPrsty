@@ -47,6 +47,7 @@ def main_menu(): # funkce pro zobrazení hlavního menu
                 print(f"{Fore.RED}Při otevírání souboru došlo k chybě{Fore.RESET}\n")
         main_menu()
     elif(choose == "2" and text == ""):
+        utils.vycisti_tonic()
         print(f"{Fore.RED}Není načtený žádný text")
         main_menu()
     elif(choose == "2"):
