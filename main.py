@@ -41,12 +41,14 @@ def main_menu(): # funkce pro zobrazení hlavního menu
         else:
             soubor = re.findall(r"[a-zA-Z_]+\.txt",path)[-1]
             text = utils.load_text(path)
-            os.system("cls||clear")
+            #os.system("cls||clear")
+            utils.vycisti_tonic()
             if(text == ""):
                 print(f"{Fore.RED}Při otevírání souboru došlo k chybě{Fore.RESET}\n")
         main_menu()
     elif(choose == "2" and text == ""):
         print(f"{Fore.RED}Není načtený žádný text")
+        main_menu()
     elif(choose == "2"):
         chyby = 0
         chybnaslova = utils.otevri_chyby(soubor)
@@ -89,7 +91,8 @@ def on_key_release(key): # funkce, která se spustí při puštění klávesy
     napsano = napsano.replace(f"{Fore.GREEN}^{Fore.RESET}","")
     try:
         if(key.vk == 90 and ctrl): # ctrl+z
-            os.system("cls||clear")
+            #os.system("cls||clear")
+            utils.vycisti_tonic()
             main_menu()
             listener.join()
             return False
@@ -121,19 +124,22 @@ def on_key_release(key): # funkce, která se spustí při puštění klávesy
         slovo = 0
         predchozi_napsano = napsano.replace(f"{Fore.GREEN}^{Fore.RESET}","")
         napsano = f"{Fore.GREEN}^{Fore.RESET}"
-        os.system("cls||clear")
+        #os.system("cls||clear")
+        utils.vycisti_tonic()
         pis()
     elif(pismeno+1 == len(text[radek]) and radek+1 == len(text)): # pokud jsme na konci řádku a konci textu
         hotovo()
     else: # jinak pokračujeme dál po písmenkách
         pismeno+=1
-        os.system("cls||clear")
+        #os.system("cls||clear")
+        utils.vycisti_tonic()
         pis()
 
 def hotovo(): # finální vyhodnocení
     global konec
     konec = time()
-    os.system("cls||clear")
+    #os.system("cls||clear")
+    utils.vycisti_tonic()
     print("Úspěšně dopsáno")
     print()
     print(f"Chybné úhozy: {Fore.RED}{chyby}{Fore.RESET}")

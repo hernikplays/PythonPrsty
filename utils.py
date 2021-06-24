@@ -42,7 +42,15 @@ def zapis_chybu(chybne_slovo,jmeno):
 
     file = open(f"./chyba_cache/{jmeno}.prst","wb")
     file.write(chyby.encode("utf-8"))
-    
+
+def vycisti_tonic():
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
 
 def welcome():
     print("  _____       _   _                 ")
